@@ -92,7 +92,7 @@ struct BlankWidget : ModuleWidget {
 			addChild(panel8);
 		}
 
-		addInput(createInput<ReIOPort>(Vec(18.25, 325.25), module, Blank::TRIG_INPUT));
+		addInput(createInput<PJ301MPort>(Vec(18.25, 325.25), module, Blank::TRIG_INPUT));
 
 	}
 

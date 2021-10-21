@@ -211,26 +211,26 @@ struct BurstWidget : ModuleWidget {
     setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/reface/reburst_bg.svg")));
 
     addParam(createParam<ReButtonL>(Vec(39, 40), module, Burst::BUTTON_PARAM));
-    addInput(createInput<ReIOPort>(Vec(48, 110), module, Burst::GATE_INPUT));;
+    addInput(createInput<PJ301MPort>(Vec(48, 110), module, Burst::GATE_INPUT));;
 
     addParam(createParam<ReKnobMGrey>(Vec(8, 106), module, Burst::ACCEL_PARAM));
     addParam(createParam<ReKnobMGrey>(Vec(83, 106), module, Burst::JITTER_PARAM));
     addParam(createParam<ReKnobMYellow>(Vec(8, 161), module, Burst::TIME_PARAM));
     addParam(createParam<ReSnapKnobBlue>(Vec(83, 161), module, Burst::REP_PARAM));
 
-    addInput(createInput<ReIOPort>(Vec(48, 164), module, Burst::CLOCK_INPUT));;
+    addInput(createInput<PJ301MPort>(Vec(48, 164), module, Burst::CLOCK_INPUT));;
 
     addParam(createParam<ReKnobSYellow>(Vec(13, 213), module, Burst::TIME_ATT_PARAM));
-    addInput(createInput<ReIOPort>(Vec(10.5, 256), module, Burst::TIME_INPUT));;
+    addInput(createInput<PJ301MPort>(Vec(10.5, 256), module, Burst::TIME_INPUT));;
     addParam(createParam<ReKnobSBlue>(Vec(88, 213), module, Burst::REP_ATT_PARAM));
-    addInput(createInput<ReIOPort>(Vec(85.5, 256), module, Burst::REP_INPUT));;
+    addInput(createInput<PJ301MPort>(Vec(85.5, 256), module, Burst::REP_INPUT));;
 
     addParam(createParam<ReSwitch2>(Vec(53.5, 291), module, Burst::GATE_MODE_PARAM));
     addParam(createParam<ReSnapKnobGreen>(Vec(45.5, 228), module, Burst::CV_MODE_PARAM));
 
-    addOutput(createOutput<ReIOPort>(Vec(10.5,323), module, Burst::CV_OUTPUT));
-    addOutput(createOutput<ReIOPort>(Vec(48,323), module, Burst::GATE_OUTPUT));
-    addOutput(createOutput<ReIOPort>(Vec(85.5,323), module, Burst::EOC_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(10.5,323), module, Burst::CV_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(48,323), module, Burst::GATE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(85.5,323), module, Burst::EOC_OUTPUT));
   }
 };
 

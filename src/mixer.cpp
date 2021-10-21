@@ -237,9 +237,9 @@ struct MixerWidget : ModuleWidget {
 
             addParam(createParam<ReKnobMRed>(Vec(108 + i * 42, 322), module, Mixer::GAIN_PARAM + i));
 
-            addInput(createInput<ReIOPort>(Vec(4.3, 199.75 + i * 25), module, Mixer::CH1_INPUT + i));
-            addInput(createInput<ReIOPort>(Vec(34.3, 199.75 + i * 25), module, Mixer::CH1_GAIN_INPUT + i));
-            addInput(createInput<ReIOPort>(Vec(64.3, 199.75 + i * 25), module, Mixer::CH1_PAN_INPUT + i));
+            addInput(createInput<PJ301MPort>(Vec(4.3, 199.75 + i * 25), module, Mixer::CH1_INPUT + i));
+            addInput(createInput<PJ301MPort>(Vec(34.3, 199.75 + i * 25), module, Mixer::CH1_GAIN_INPUT + i));
+            addInput(createInput<PJ301MPort>(Vec(64.3, 199.75 + i * 25), module, Mixer::CH1_PAN_INPUT + i));
         }
         for(int i=0;i<3;i++) { // leds to the left
             addChild(createLight<SmallLight<ReRedLight>>(Vec(104 + i * 42, 30), module, Mixer::MUTE_LIGHT + i));
@@ -258,18 +258,18 @@ struct MixerWidget : ModuleWidget {
             addChild(createLight<SmallLight<ReRedLight>>(Vec(394, 33 + i * 9), module, Mixer::METER_R_LIGHT + i));
         }
 
-        addOutput(createOutput<ReIOPort>(Vec(356, 108.75), module, Mixer::L_OUTPUT));
-        addOutput(createOutput<ReIOPort>(Vec(386, 108.75), module, Mixer::R_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(356, 108.75), module, Mixer::L_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(386, 108.75), module, Mixer::R_OUTPUT));
 
-        addOutput(createOutput<ReIOPort>(Vec(4.25, 66.75), module, Mixer::AUX1_L_OUTPUT));
-        addOutput(createOutput<ReIOPort>(Vec(34.25, 66.75), module, Mixer::AUX1_R_OUTPUT));
-        addInput(createInput<ReIOPort>(Vec(4.25, 31.75), module, Mixer::AUX1_L_INPUT));
-        addInput(createInput<ReIOPort>(Vec(34.25, 31.75), module, Mixer::AUX1_R_INPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(4.25, 66.75), module, Mixer::AUX1_L_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(34.25, 66.75), module, Mixer::AUX1_R_OUTPUT));
+        addInput(createInput<PJ301MPort>(Vec(4.25, 31.75), module, Mixer::AUX1_L_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(34.25, 31.75), module, Mixer::AUX1_R_INPUT));
 
-        addOutput(createOutput<ReIOPort>(Vec(4.25, 108.75), module, Mixer::AUX2_L_OUTPUT));
-        addOutput(createOutput<ReIOPort>(Vec(34.25, 108.75), module, Mixer::AUX2_R_OUTPUT));
-        addInput(createInput<ReIOPort>(Vec(4.25, 143.75), module, Mixer::AUX2_L_INPUT));
-        addInput(createInput<ReIOPort>(Vec(34.25, 143.75), module, Mixer::AUX2_R_INPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(4.25, 108.75), module, Mixer::AUX2_L_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(34.25, 108.75), module, Mixer::AUX2_R_OUTPUT));
+        addInput(createInput<PJ301MPort>(Vec(4.25, 143.75), module, Mixer::AUX2_L_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(34.25, 143.75), module, Mixer::AUX2_R_INPUT));
 
     }
 };

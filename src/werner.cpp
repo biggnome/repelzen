@@ -77,8 +77,8 @@ struct WernerWidget : ModuleWidget {
         addParam(createParam<ReKnobMGrey>(Vec(15.5, 106), module, Werner::DELTA_PARAM));
 
         for(int i=0;i<NUM_CHANNELS;i++) {
-        	addInput(createInput<ReIOPort>(Vec(3.25, 198.75 + i*42), module, Werner::CV_INPUT + i));
-        	addOutput(createOutput<ReIOPort>(Vec(33.25, 198.75 + i*42), module, Werner::GATE_OUTPUT + i));
+        	addInput(createInput<PJ301MPort>(Vec(3.25, 198.75 + i*42), module, Werner::CV_INPUT + i));
+        	addOutput(createOutput<PJ301MPort>(Vec(33.25, 198.75 + i*42), module, Werner::GATE_OUTPUT + i));
         }
     }
 };

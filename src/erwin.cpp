@@ -185,15 +185,15 @@ struct ErwinWidget : ModuleWidget {
 
         /* "scenes" */
         addParam(createParam<ReSnapKnobLGrey>(Vec(39, 40), module, Erwin::SELECT_PARAM));
-        addInput(createInput<ReIOPort>(Vec(10.75, 108.75), module, Erwin::SELECT_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(10.75, 108.75), module, Erwin::SELECT_INPUT));
 
         /* transpose = octave; semi = root */
-        addInput(createInput<ReIOPort>(Vec(85.75, 108.75), module, Erwin::TRANSPOSE_INPUT));
-        addInput(createInput<ReIOPort>(Vec(48.25, 108.75), module, Erwin::SEMI_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(85.75, 108.75), module, Erwin::TRANSPOSE_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(48.25, 108.75), module, Erwin::SEMI_INPUT));
 
         for(int i=0;i<NUM_CHANNELS;i++) {
-            addOutput(createOutput<ReIOPort>(Vec(92.75, 198.75 + i*42), module, Erwin::OUT_OUTPUT + i));
-            addInput(createInput<ReIOPort>(Vec(62.75, 198.75 + i*42), module, Erwin::IN_INPUT + i));
+            addOutput(createOutput<PJ301MPort>(Vec(92.75, 198.75 + i*42), module, Erwin::OUT_OUTPUT + i));
+            addInput(createInput<PJ301MPort>(Vec(62.75, 198.75 + i*42), module, Erwin::IN_INPUT + i));
         }
 
         addParam(createParam<ReSnapKnobSRed>(Vec(80, 181), module, Erwin::CHANNEL_TRANSPOSE_PARAM));

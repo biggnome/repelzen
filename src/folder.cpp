@@ -152,10 +152,10 @@ struct FolderWidget : ModuleWidget {
         addParam(createParam<ReKnobMBlue>(Vec(15.5, 106), module, Folder::SYM_PARAM));
         addParam(createParam<ReKnobSBlue>(Vec(35.5, 238.5), module, Folder::SYM_ATT_PARAM));
 
-        addInput(createInput<ReIOPort>(Vec(3.5, 325.5), module, Folder::GATE_INPUT));;
-        addInput(createInput<ReIOPort>(Vec(3.5, 283), module, Folder::GAIN_INPUT));;
-        addInput(createInput<ReIOPort>(Vec(33.5, 283), module, Folder::SYM_INPUT));;
-        addOutput(createOutput<ReIOPort>(Vec(33.5, 325.5), module, Folder::GATE_OUTPUT));
+        addInput(createInput<PJ301MPort>(Vec(3.5, 325.5), module, Folder::GATE_INPUT));;
+        addInput(createInput<PJ301MPort>(Vec(3.5, 283), module, Folder::GAIN_INPUT));;
+        addInput(createInput<PJ301MPort>(Vec(33.5, 283), module, Folder::SYM_INPUT));;
+        addOutput(createOutput<PJ301MPort>(Vec(33.5, 325.5), module, Folder::GATE_OUTPUT));
     }
 
     struct FolderMenuItem : MenuItem {
