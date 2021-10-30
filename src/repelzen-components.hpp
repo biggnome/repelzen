@@ -53,11 +53,27 @@ struct ReKnobMGreen : app::SvgKnob {
     }
 };
 
+struct ReKnobMWhite : app::SvgKnob {
+    ReKnobMWhite() {
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/recomp/knob_m_white.svg")));
+    }
+};
+
 struct ReKnobMGrey : app::SvgKnob {
     ReKnobMGrey() {
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/recomp/knob_m_grey.svg")));
+    }
+};
+
+struct ReKnobMDarkGrey : app::SvgKnob {
+    ReKnobMDarkGrey() {
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/recomp/knob_m_darkgrey.svg")));
     }
 };
 

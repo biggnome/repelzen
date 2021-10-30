@@ -229,9 +229,9 @@ struct MixerWidget : ModuleWidget {
             addParam(createParam<ReKnobMGreen>(Vec(108 + i * 42, 64), module, Mixer::AUX1_PARAM + i));
             addParam(createParam<ReKnobMBlue>(Vec(108 + i * 42, 106), module, Mixer::AUX2_PARAM + i));
             addParam(createParam<ReKnobMYellow>(Vec(108 + i * 42, 280), module, Mixer::PAN_PARAM + i));
-            addParam(createParam<ReKnobMGrey>(Vec(108 + i * 42, 151), module, Mixer::EQ_HIGH_PARAM + i));
+            addParam(createParam<ReKnobMWhite>(Vec(108 + i * 42, 151), module, Mixer::EQ_HIGH_PARAM + i));
             addParam(createParam<ReKnobMGrey>(Vec(108 + i * 42, 193), module, Mixer::EQ_MID_PARAM + i));
-            addParam(createParam<ReKnobMGrey>(Vec(108 + i * 42, 235), module, Mixer::EQ_LOW_PARAM + i));
+            addParam(createParam<ReKnobMDarkGrey>(Vec(108 + i * 42, 235), module, Mixer::EQ_LOW_PARAM + i));
 
             addParam(createParam<ReButtonM>(Vec(112 + i * 42, 33), module, Mixer::MUTE_PARAM + i));
 
@@ -249,9 +249,9 @@ struct MixerWidget : ModuleWidget {
         }
 
         addParam(createParam<ReKnobLGrey>(Vec(361.5, 294), module, Mixer::MASTER_GAIN_PARAM));
-        addParam(createParam<ReKnobMGrey>(Vec(368, 151), module, Mixer::MASTER_EQ_HIGH_PARAM));
+        addParam(createParam<ReKnobMWhite>(Vec(368, 151), module, Mixer::MASTER_EQ_HIGH_PARAM));
         addParam(createParam<ReKnobMGrey>(Vec(368, 193), module, Mixer::MASTER_EQ_MID_PARAM));
-        addParam(createParam<ReKnobMGrey>(Vec(368, 235), module, Mixer::MASTER_EQ_LOW_PARAM));
+        addParam(createParam<ReKnobMDarkGrey>(Vec(368, 235), module, Mixer::MASTER_EQ_LOW_PARAM));
         // meter
         for(int i=0;i<6;i++) {
             addChild(createLight<SmallLight<ReRedLight>>(Vec(364, 33 + i * 9), module, Mixer::METER_L_LIGHT + i));
