@@ -79,15 +79,24 @@ struct Burst : Module
 
   Burst() {
 	config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-	configParam(Burst::BUTTON_PARAM, 0.0, 1.0, 0.0, "manual burst");
-	configParam(Burst::REP_PARAM, 0, 8, 4, "repetitions");
-	configParam(Burst::TIME_PARAM, 0.02, 1, 0.508, "time");
-	configParam(Burst::ACCEL_PARAM, 1.0, 2.0, 1.0, "acceleration");
-	configParam(Burst::JITTER_PARAM, 0.0, 1.0, 0.0, "jitter");
-	configParam(Burst::CV_MODE_PARAM, 0, 7, 0, "cv mode");
-	configParam(Burst::REP_ATT_PARAM, -1.0, 1.0, 0.0, "repetition modulation");
-	configParam(Burst::TIME_ATT_PARAM, -1.0, 1.0, 0.0, "time modulation");
-	configParam(Burst::GATE_MODE_PARAM, 0.0, 1.0, 0.0, "gate/trigger switch");
+	configSwitch(Burst::BUTTON_PARAM, 0.0, 1.0, 0.0, "Trigger");
+	configParam(Burst::REP_PARAM, 0, 8, 4, "Repetitions");
+	configParam(Burst::TIME_PARAM, 0.02, 1, 0.508, "Time");
+	configParam(Burst::ACCEL_PARAM, 1.0, 2.0, 1.0, "Acceleration");
+	configParam(Burst::JITTER_PARAM, 0.0, 1.0, 0.0, "Jitter");
+	configSwitch(Burst::CV_MODE_PARAM, 0, 7, 0, "CV Mode", {"Up", "Down", "Alt 1", "Alt 2", "Rand +", "Rand −", "Rand Walk", "Random"});
+	configParam(Burst::REP_ATT_PARAM, -1.0, 1.0, 0.0, "Repetition Mod");
+	configParam(Burst::TIME_ATT_PARAM, -1.0, 1.0, 0.0, "Time Mod");
+	configSwitch(Burst::GATE_MODE_PARAM, 0.0, 1.0, 0.0, "Mode", {"Gate", "Trigger"});
+
+  configInput(GATE_INPUT, "Burst trigger" );
+  configInput(CLOCK_INPUT, "Clock" );
+  configInput(REP_INPUT, "Repetitions CV" );
+  configInput(TIME_INPUT, "Time CV" );
+
+  configOutput(GATE_OUTPUT, "Burst" );
+  configOutput(EOC_OUTPUT, "End-of-cycle" );
+  configOutput(CV_OUTPUT, "CV" );
   }
 };
 

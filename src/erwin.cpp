@@ -1,6 +1,7 @@
 #include "repelzen.hpp"
 #include "osdialog.h"
 #include <math.h>
+#include <string>
 
 #define NUM_CHANNELS 4
 #define NUM_SCALES 16
@@ -34,17 +35,28 @@ struct Erwin : Module {
         NEAREST
     };
 
+
     Erwin() {
+        std::string notes[12] = {"C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"};
+
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM, -4, 4, 0, "octave");
-        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 1, -4, 4, 0, "octave");
-        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 2, -4, 4, 0, "octave");
-        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 3, -4, 4, 0, "octave");
-        configParam(Erwin::SELECT_PARAM, 0, 15, 0, "scene", "", 0, 1, 1);
+        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM, -4, 4, 0, "Octave");
+        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 1, -4, 4, 0, "Octave");
+        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 2, -4, 4, 0, "Octave");
+        configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 3, -4, 4, 0, "Octave");
+        configParam(Erwin::SELECT_PARAM, 0, 15, 0, "Scene", "", 0, 1, 1);
         for(int i=0; i<12; i++) {
-            configParam(Erwin::NOTE_PARAM + i, 0.0, 1.0, 0.0, "enable note");
+            configSwitch(Erwin::NOTE_PARAM + i, 0.0, 1.0, 0.0, "Enable Note " + notes[i]);
         }
         onReset();
+
+        configInput(TRANSPOSE_INPUT, "Octave CV");
+        configInput(SEMI_INPUT, "Transpose CV");
+        for(int i=0; i<NUM_CHANNELS; i++) {
+            configInput(IN_INPUT + i, "#" + std::to_string(i+1));
+            configOutput(OUT_OUTPUT + i, "#" +std::to_string(i+1));
+        }
+        configInput(IN_INPUT + 4, "Scene CV");
     }
 
     void process(const ProcessArgs &args) override;

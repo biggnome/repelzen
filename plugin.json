@@ -15,6 +15,7 @@
     {
       "slug": "reblank",
       "name": "re-blank",
+      "hidden": true,
       "description": "4hp blank panel with logo",
       "tags": [
         "blank"
@@ -32,6 +33,7 @@
     {
       "slug": "refold",
       "name": "re-fold",
+      "hidden": true,
       "description": "wavefolder",
       "tags": [
         "waveshaper",
@@ -59,6 +61,7 @@
     {
       "slug": "retrig",
       "name": "re-trig",
+      "hidden": true,
       "description": "cv to trigger utility",
       "tags": [
         "utility"

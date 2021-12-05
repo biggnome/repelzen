@@ -49,22 +49,39 @@ struct Mixer : Module {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
         for(int i=0;i<NUM_CHANNELS;i++) {
-            configParam(Mixer::AUX1_PARAM + i, 0.0f, 1.0f, 0.0f, "send1 amount");
-            configParam(Mixer::AUX2_PARAM + i, 0.0f, 1.0f, 0.0f, "send2 amount");
-            configParam(Mixer::PAN_PARAM + i, -1.0f, 1.0f, 0.0f, "pan");
-            configParam(Mixer::EQ_HIGH_PARAM + i, -15.0f, 15.0f, 0.0f, "eq high band gain", "dB");
-            configParam(Mixer::EQ_MID_PARAM + i, -12.5f, 12.5f, 0.0f, "eq mid band gain", "dB");
-            configParam(Mixer::EQ_LOW_PARAM + i, -20.0f, 20.0f, 0.0f, "eq low band gain", "dB");
-            configParam(Mixer::MUTE_PARAM + i, 0.0f, 1.0f, 0.0f, "mute on/off");
-            configParam(Mixer::GAIN_PARAM + i, -60.0f, 0.0f, -60.0f, "channel gain", "dB");
+            configParam(Mixer::AUX1_PARAM + i, 0.0f, 1.0f, 0.0f, "Send 1");
+            configParam(Mixer::AUX2_PARAM + i, 0.0f, 1.0f, 0.0f, "Send 2");
+            configParam(Mixer::PAN_PARAM + i, -1.0f, 1.0f, 0.0f, "Pan");
+            configParam(Mixer::EQ_HIGH_PARAM + i, -15.0f, 15.0f, 0.0f, "High Gain", "dB");
+            configParam(Mixer::EQ_MID_PARAM + i, -12.5f, 12.5f, 0.0f, "Mid Gain", "dB");
+            configParam(Mixer::EQ_LOW_PARAM + i, -20.0f, 20.0f, 0.0f, "Low Gain", "dB");
+            configParam(Mixer::GAIN_PARAM + i, -60.0f, 0.0f, -6.0f, "Gain", "dB");
+            configSwitch(Mixer::MUTE_PARAM + i, 0.0f, 1.0f, 0.0f, "Mute");
             channels[i].hp.setCutoff(35.0f, 0.8f, AeFilterType::AeHIGHPASS);
             channels[i].hs.setParams(12000.0f, 0.8f, -5.0f, AeEQType::AeHIGHSHELVE);
+
+            configInput(CH1_INPUT + i, "Ch. " + std::to_string(i+1));
+            configInput(CH1_GAIN_INPUT + i, "Ch. " + std::to_string(i+1) + " level CV");
+            configInput(CH1_PAN_INPUT + i, "Ch. " + std::to_string(i+1) + " pan CV");
         }
 
-        configParam(Mixer::MASTER_GAIN_PARAM, -60.0f, 0.0f, -30.0f, "master gain", "dB");
-        configParam(Mixer::MASTER_EQ_HIGH_PARAM, -7.0f, 7.0f, 0.0f, "master eq high band gain", "dB");
-        configParam(Mixer::MASTER_EQ_MID_PARAM, -7.0f, 7.0f, 0.0f, "master eq mid band gain", "dB");
-        configParam(Mixer::MASTER_EQ_LOW_PARAM, -10.0f, 10.0f, 0.0f, "master eq low band gain", "dB");
+        configParam(Mixer::MASTER_GAIN_PARAM, -60.0f, 0.0f, -12.0f, "Gain", "dB");
+        configParam(Mixer::MASTER_EQ_HIGH_PARAM, -7.0f, 7.0f, 0.0f, "High Gain", "dB");
+        configParam(Mixer::MASTER_EQ_MID_PARAM, -7.0f, 7.0f, 0.0f, "Mid Gain", "dB");
+        configParam(Mixer::MASTER_EQ_LOW_PARAM, -10.0f, 10.0f, 0.0f, "Low Gain", "dB");
+
+        configInput(AUX1_L_INPUT, "Aux 1 left return");
+        configInput(AUX1_R_INPUT, "Aux 1 right return");
+        configInput(AUX2_L_INPUT, "Aux 2 left return");
+        configInput(AUX2_R_INPUT, "Aux 2 right return");
+
+        configOutput(AUX1_L_OUTPUT, "Aux 1 left send");
+        configOutput(AUX1_R_OUTPUT, "Aux 1 right send");
+        configOutput(AUX2_L_OUTPUT, "Aux 2 left send");
+        configOutput(AUX2_R_OUTPUT, "Aux 2 right send");
+
+        configOutput(L_OUTPUT, "Main left");
+        configOutput(R_OUTPUT, "Main right");
 
         maHp.setCutoff(35.0f, 0.8f, AeFilterType::AeHIGHPASS);
         maHs.setParams(12000.0f, 0.8f, -2.0f, AeEQType::AeHIGHSHELVE);
@@ -143,7 +160,7 @@ void Mixer::process(const ProcessArgs &args) {
             float midGain = params[EQ_MID_PARAM + i].getValue();
             float highGain = params[EQ_HIGH_PARAM + i].getValue();
 
-            //only calculate coefficients when neccessary
+            //only calculate coefficients when necessary
             if(lowGain != channels[i].lastLowGain) {
                 channels[i].eqLow.setParams(125.0f, 0.45f, lowGain, AeEQType::AeLOWSHELVE);
                 channels[i].lastLowGain = lowGain;

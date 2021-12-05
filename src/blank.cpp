@@ -17,6 +17,8 @@ struct Blank : Module {
 
 	Blank() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+
+		configInput(TRIG_INPUT, "Trigger" );
 		bg = 0;
 	}
 	void process(const ProcessArgs &args) override;

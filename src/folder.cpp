@@ -29,11 +29,14 @@ struct Folder : Module {
 
     Folder() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Folder::STAGE_PARAM, 1, 3, 2, "folding stages", "", 0, 2, 0);
-        configParam(Folder::GAIN_PARAM, 0.0, 14.0, 1.0, "folding amount");
-        configParam(Folder::GAIN_ATT_PARAM, -1.0, 1.0, 0, "folding amount modulation");
-        configParam(Folder::SYM_PARAM, -1.0, 1.0, 0.0, "symmetry");
-        configParam(Folder::SYM_ATT_PARAM, -1.0, 1.0, 0.0, "symmetry modulation");
+        configParam(Folder::STAGE_PARAM, 1, 3, 2, "Fold Stages", "", 0, 2, 0);
+        configParam(Folder::GAIN_PARAM, 0.0, 14.0, 1.0, "Fold Amount");
+        configParam(Folder::GAIN_ATT_PARAM, -1.0, 1.0, 0, "Amount Mod");
+        configParam(Folder::SYM_PARAM, -1.0, 1.0, 0.0, "Symmetry");
+        configParam(Folder::SYM_ATT_PARAM, -1.0, 1.0, 0.0, "Symmetry Mod");
+
+        configInput(GAIN_INPUT, "Fold CV");
+        configInput(SYM_INPUT, "Symmetry CV");
 
         /* SampleRateConverter needs integer value, #6 */
         int sr = APP->engine->getSampleRate();
@@ -172,7 +175,7 @@ struct FolderWidget : ModuleWidget {
         menu->addChild(new MenuSeparator());
 
         FolderMenuItem *altItem = createMenuItem<FolderMenuItem>(
-            "Alternative folding algorithm", CHECKMARK(module->alternativeMode)
+            "Alt. Folding Algorithm", CHECKMARK(module->alternativeMode)
         );
         altItem->module = module;
         menu->addChild(altItem);

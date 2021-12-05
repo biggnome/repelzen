@@ -23,8 +23,8 @@ struct Werner : Module {
 
     Werner() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Werner::TIME_PARAM, 0.0, 1.0, 0.0, "pulse width");
-        configParam(Werner::DELTA_PARAM, 0.0, 1.0, 0.0, "sensitivity");
+        configParam(Werner::TIME_PARAM, 0.0, 1.0, 0.0, "Pulse Width");
+        configParam(Werner::DELTA_PARAM, 0.0, 1.0, 0.0, "Sensitivity");
     }
 
     void process(const ProcessArgs &args) override;
