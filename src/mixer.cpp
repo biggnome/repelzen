@@ -3,52 +3,59 @@
 
 #define NUM_CHANNELS 6
 
-struct Mixer : Module {
-    enum ParamIds {
-	MASTER_GAIN_PARAM,
-	MASTER_EQ_LOW_PARAM,
-	MASTER_EQ_MID_PARAM,
-	MASTER_EQ_HIGH_PARAM,
-	GAIN_PARAM,
-	MUTE_PARAM = GAIN_PARAM + NUM_CHANNELS,
-	EQ_LOW_PARAM = MUTE_PARAM + NUM_CHANNELS,
-	EQ_MID_PARAM = EQ_LOW_PARAM + NUM_CHANNELS,
-	EQ_HIGH_PARAM = EQ_MID_PARAM + NUM_CHANNELS,
-	PAN_PARAM = EQ_HIGH_PARAM + NUM_CHANNELS,
-	AUX1_PARAM = PAN_PARAM + NUM_CHANNELS,
-	AUX2_PARAM = AUX1_PARAM + NUM_CHANNELS,
-	NUM_PARAMS = AUX2_PARAM + NUM_CHANNELS
+struct Mixer : Module
+{
+    enum ParamIds
+    {
+        MASTER_GAIN_PARAM,
+        MASTER_EQ_LOW_PARAM,
+        MASTER_EQ_MID_PARAM,
+        MASTER_EQ_HIGH_PARAM,
+        GAIN_PARAM,
+        MUTE_PARAM = GAIN_PARAM + NUM_CHANNELS,
+        EQ_LOW_PARAM = MUTE_PARAM + NUM_CHANNELS,
+        EQ_MID_PARAM = EQ_LOW_PARAM + NUM_CHANNELS,
+        EQ_HIGH_PARAM = EQ_MID_PARAM + NUM_CHANNELS,
+        PAN_PARAM = EQ_HIGH_PARAM + NUM_CHANNELS,
+        AUX1_PARAM = PAN_PARAM + NUM_CHANNELS,
+        AUX2_PARAM = AUX1_PARAM + NUM_CHANNELS,
+        NUM_PARAMS = AUX2_PARAM + NUM_CHANNELS
     };
-    enum InputIds {
-	AUX1_L_INPUT,
-	AUX1_R_INPUT,
-	AUX2_L_INPUT,
-	AUX2_R_INPUT,
-	CH1_INPUT,
-	CH1_GAIN_INPUT = CH1_INPUT + NUM_CHANNELS,
-	CH1_PAN_INPUT = CH1_GAIN_INPUT + NUM_CHANNELS,
-	NUM_INPUTS = CH1_PAN_INPUT + NUM_CHANNELS
+    enum InputIds
+    {
+        AUX1_L_INPUT,
+        AUX1_R_INPUT,
+        AUX2_L_INPUT,
+        AUX2_R_INPUT,
+        CH1_INPUT,
+        CH1_GAIN_INPUT = CH1_INPUT + NUM_CHANNELS,
+        CH1_PAN_INPUT = CH1_GAIN_INPUT + NUM_CHANNELS,
+        NUM_INPUTS = CH1_PAN_INPUT + NUM_CHANNELS
     };
-    enum OutputIds {
-	L_OUTPUT,
-	R_OUTPUT,
-	AUX1_L_OUTPUT,
-	AUX1_R_OUTPUT,
-	AUX2_L_OUTPUT,
-	AUX2_R_OUTPUT,
-	NUM_OUTPUTS
+    enum OutputIds
+    {
+        L_OUTPUT,
+        R_OUTPUT,
+        AUX1_L_OUTPUT,
+        AUX1_R_OUTPUT,
+        AUX2_L_OUTPUT,
+        AUX2_R_OUTPUT,
+        NUM_OUTPUTS
     };
-    enum LightIds {
-	MUTE_LIGHT,
-	METER_L_LIGHT = MUTE_LIGHT + NUM_CHANNELS,
-	METER_R_LIGHT = METER_L_LIGHT + 6,
-	NUM_LIGHTS = METER_R_LIGHT + 6
+    enum LightIds
+    {
+        MUTE_LIGHT,
+        METER_L_LIGHT = MUTE_LIGHT + NUM_CHANNELS,
+        METER_R_LIGHT = METER_L_LIGHT + 6,
+        NUM_LIGHTS = METER_R_LIGHT + 6
     };
 
-    Mixer() {
+    Mixer()
+    {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
-        for(int i=0;i<NUM_CHANNELS;i++) {
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
             configParam(Mixer::AUX1_PARAM + i, 0.0f, 1.0f, 0.0f, "Send 1");
             configParam(Mixer::AUX2_PARAM + i, 0.0f, 1.0f, 0.0f, "Send 2");
             configParam(Mixer::PAN_PARAM + i, -1.0f, 1.0f, 0.0f, "Pan");
@@ -60,9 +67,9 @@ struct Mixer : Module {
             channels[i].hp.setCutoff(35.0f, 0.8f, AeFilterType::AeHIGHPASS);
             channels[i].hs.setParams(12000.0f, 0.8f, -5.0f, AeEQType::AeHIGHSHELVE);
 
-            configInput(CH1_INPUT + i, "Ch. " + std::to_string(i+1));
-            configInput(CH1_GAIN_INPUT + i, "Ch. " + std::to_string(i+1) + " level CV");
-            configInput(CH1_PAN_INPUT + i, "Ch. " + std::to_string(i+1) + " pan CV");
+            configInput(CH1_INPUT + i, "Ch. " + std::to_string(i + 1));
+            configInput(CH1_GAIN_INPUT + i, "Ch. " + std::to_string(i + 1) + " level CV");
+            configInput(CH1_PAN_INPUT + i, "Ch. " + std::to_string(i + 1) + " pan CV");
         }
 
         configParam(Mixer::MASTER_GAIN_PARAM, -60.0f, 0.0f, -12.0f, "Gain", "dB");
@@ -86,11 +93,12 @@ struct Mixer : Module {
         maHp.setCutoff(35.0f, 0.8f, AeFilterType::AeHIGHPASS);
         maHs.setParams(12000.0f, 0.8f, -2.0f, AeEQType::AeHIGHSHELVE);
 
-        //meter.dBInterval = 10.0f;
-		lightDivider.setDivision(512);
+        // meter.dBInterval = 10.0f;
+        lightDivider.setDivision(512);
     }
 
-    struct mixerChannel {
+    struct mixerChannel
+    {
         AeEqualizer eqLow;
         AeEqualizer eqMid;
         AeEqualizer eqHigh;
@@ -98,7 +106,7 @@ struct Mixer : Module {
         AeFilter hp;
         AeEqualizer hs;
 
-        //initialize out of range so it passes the check on initialisation
+        // initialize out of range so it passes the check on initialisation
         float lastLowGain = -25.0f;
         float lastMidGain = -25.0f;
         float lastHighGain = -25.0f;
@@ -108,10 +116,10 @@ struct Mixer : Module {
     mixerChannel channels[NUM_CHANNELS];
     dsp::VuMeter2 meterL;
     dsp::VuMeter2 meterR;
-	dsp::ClockDivider lightDivider;
+    dsp::ClockDivider lightDivider;
     dsp::SchmittTrigger muteTrigger[NUM_CHANNELS];
 
-    //master EQ
+    // master EQ
     AeEqualizerStereo eqMaLow;
     AeEqualizerStereo eqMaMid;
     AeEqualizerStereo eqMaHigh;
@@ -124,8 +132,8 @@ struct Mixer : Module {
     void process(const ProcessArgs &args) override;
 };
 
-
-void Mixer::process(const ProcessArgs &args) {
+void Mixer::process(const ProcessArgs &args)
+{
 
     float outL = 0.0f;
     float outR = 0.0f;
@@ -135,41 +143,47 @@ void Mixer::process(const ProcessArgs &args) {
     float aux2R = 0.0f;
 
     float masterGain = params[MASTER_GAIN_PARAM].getValue();
-    masterGain = pow(10, masterGain/20);
+    masterGain = pow(10, masterGain / 20);
 
     float aux1LIn = inputs[AUX1_L_INPUT].getNormalVoltage(0.0f);
     float aux1RIn = inputs[AUX1_R_INPUT].getNormalVoltage(0.0f);
     float aux2LIn = inputs[AUX2_L_INPUT].getNormalVoltage(0.0f);
     float aux2RIn = inputs[AUX2_R_INPUT].getNormalVoltage(0.0f);
 
-    for(int i=0;i<NUM_CHANNELS;i++) {
+    for (int i = 0; i < NUM_CHANNELS; i++)
+    {
         // sum polyphonic cables, as per vcv voltage standards, #5
-    	float in = inputs[CH1_INPUT + i].getVoltageSum();
+        float in = inputs[CH1_INPUT + i].getVoltageSum();
 
-    	if(muteTrigger[i].process(params[MUTE_PARAM + i].getValue())) {
-    	    channels[i].mute = !channels[i].mute;
-    	    lights[MUTE_LIGHT + i].value =  (channels[i].mute) ? 1.0f : 0.0f;
-    	}
+        if (muteTrigger[i].process(params[MUTE_PARAM + i].getValue()))
+        {
+            channels[i].mute = !channels[i].mute;
+            lights[MUTE_LIGHT + i].value = (channels[i].mute) ? 1.0f : 0.0f;
+        }
 
-        if(!channels[i].mute) {
-            float gain = pow(10, params[GAIN_PARAM + i].getValue()/20.0f);
+        if (!channels[i].mute)
+        {
+            float gain = pow(10, params[GAIN_PARAM + i].getValue() / 20.0f);
             gain *= inputs[CH1_GAIN_INPUT + i].getNormalVoltage(10.0f) / 10.0f;
 
-            float pan = clamp(params[PAN_PARAM + i].getValue() + inputs[CH1_PAN_INPUT + i].getVoltage() /5.0f, -1.0f, 1.0f);
+            float pan = clamp(params[PAN_PARAM + i].getValue() + inputs[CH1_PAN_INPUT + i].getVoltage() / 5.0f, -1.0f, 1.0f);
             float lowGain = params[EQ_LOW_PARAM + i].getValue();
             float midGain = params[EQ_MID_PARAM + i].getValue();
             float highGain = params[EQ_HIGH_PARAM + i].getValue();
 
-            //only calculate coefficients when necessary
-            if(lowGain != channels[i].lastLowGain) {
+            // only calculate coefficients when necessary
+            if (lowGain != channels[i].lastLowGain)
+            {
                 channels[i].eqLow.setParams(125.0f, 0.45f, lowGain, AeEQType::AeLOWSHELVE);
                 channels[i].lastLowGain = lowGain;
             }
-            if(midGain != channels[i].lastMidGain) {
+            if (midGain != channels[i].lastMidGain)
+            {
                 channels[i].eqMid.setParams(1200.0f, 0.52f, midGain, AeEQType::AePEAKINGEQ);
                 channels[i].lastMidGain = midGain;
             }
-            if(highGain != channels[i].lastHighGain) {
+            if (highGain != channels[i].lastHighGain)
+            {
                 channels[i].eqHigh.setParams(1800.0f, 0.4f, highGain, AeEQType::AeHIGHSHELVE);
                 channels[i].lastHighGain = highGain;
             }
@@ -183,9 +197,9 @@ void Mixer::process(const ProcessArgs &args) {
             float leftGain = (pan < 0) ? gain : gain * (1 - pan);
             float rightGain = (pan > 0) ? gain : gain * (1 + pan);
 
-            //outputs
-            //out = tanh(out) * 5.0f;
-            //out *= 5.0f;
+            // outputs
+            // out = tanh(out) * 5.0f;
+            // out *= 5.0f;
             outL += out * leftGain;
             outR += out * rightGain;
             aux1L += out * leftGain * params[AUX1_PARAM + i].getValue();
@@ -195,16 +209,19 @@ void Mixer::process(const ProcessArgs &args) {
         }
     }
 
-    //master EQ
-    if(lastMaLowGain != params[MASTER_EQ_LOW_PARAM].getValue()) {
+    // master EQ
+    if (lastMaLowGain != params[MASTER_EQ_LOW_PARAM].getValue())
+    {
         lastMaLowGain = params[MASTER_EQ_LOW_PARAM].getValue();
         eqMaLow.setParams(120.0f, 0.45f, lastMaLowGain, AeEQType::AeLOWSHELVE);
     }
-    if(lastMaMidGain != params[MASTER_EQ_MID_PARAM].getValue()) {
+    if (lastMaMidGain != params[MASTER_EQ_MID_PARAM].getValue())
+    {
         lastMaMidGain = params[MASTER_EQ_MID_PARAM].getValue();
         eqMaMid.setParams(1300.0f, 0.95f, lastMaMidGain, AeEQType::AePEAKINGEQ);
     }
-    if(lastMaHighGain != params[MASTER_EQ_HIGH_PARAM].getValue()) {
+    if (lastMaHighGain != params[MASTER_EQ_HIGH_PARAM].getValue())
+    {
         lastMaHighGain = params[MASTER_EQ_HIGH_PARAM].getValue();
         eqMaHigh.setParams(1700.0f, 0.45f, lastMaHighGain, AeEQType::AeHIGHSHELVE);
     }
@@ -212,10 +229,10 @@ void Mixer::process(const ProcessArgs &args) {
     eqMaLow.process(&outL, &outR);
     eqMaMid.process(&outL, &outR);
     eqMaHigh.process(&outL, &outR);
-    maHp.process(&outL,&outR);
-    maHs.process(&outL,&outR);
+    maHp.process(&outL, &outR);
+    maHs.process(&outL, &outR);
 
-    //outputs
+    // outputs
     outL = (outL + aux1LIn + aux2LIn) * masterGain;
     outR = (outR + aux1RIn + aux2RIn) * masterGain;
     outputs[L_OUTPUT].setVoltage(outL);
@@ -226,23 +243,28 @@ void Mixer::process(const ProcessArgs &args) {
     outputs[AUX2_R_OUTPUT].setVoltage(aux2R);
 
     // vuMeters
-	meterL.process(args.sampleTime, outL / 5.0f);
-	meterR.process(args.sampleTime, outR / 5.0f);
-	if (lightDivider.process()) {
-	    for (int i = 0; i < 6; i++) {
-	    	lights[METER_L_LIGHT + i].setBrightness(meterL.getBrightness(-10.f * (i + 1), -10.f * i));
-	    	lights[METER_R_LIGHT + i].setBrightness(meterR.getBrightness(-10.f * (i + 1), -10.f * i));
-	    }
-	}
+    meterL.process(args.sampleTime, outL / 5.0f);
+    meterR.process(args.sampleTime, outR / 5.0f);
+    if (lightDivider.process())
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            lights[METER_L_LIGHT + i].setBrightness(meterL.getBrightness(-10.f * (i + 1), -10.f * i));
+            lights[METER_R_LIGHT + i].setBrightness(meterR.getBrightness(-10.f * (i + 1), -10.f * i));
+        }
+    }
 }
 
-struct MixerWidget : ModuleWidget {
-    MixerWidget(Mixer *module) {
+struct MixerWidget : ModuleWidget
+{
+    MixerWidget(Mixer *module)
+    {
         setModule(module);
         box.size = Vec(28 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
-        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/reface/rexmix_bg.svg")));
+        setPanel(createPanel(asset::plugin(pluginInstance, "res/reface/rexmix_bg.svg")));
 
-        for(int i=0;i<NUM_CHANNELS;i++) {
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
             addParam(createParam<ReKnobMGreen>(Vec(108 + i * 42, 64), module, Mixer::AUX1_PARAM + i));
             addParam(createParam<ReKnobMBlue>(Vec(108 + i * 42, 106), module, Mixer::AUX2_PARAM + i));
             addParam(createParam<ReKnobMYellow>(Vec(108 + i * 42, 280), module, Mixer::PAN_PARAM + i));
@@ -258,10 +280,12 @@ struct MixerWidget : ModuleWidget {
             addInput(createInput<PJ301MPort>(Vec(34.3, 199.75 + i * 25), module, Mixer::CH1_GAIN_INPUT + i));
             addInput(createInput<PJ301MPort>(Vec(64.3, 199.75 + i * 25), module, Mixer::CH1_PAN_INPUT + i));
         }
-        for(int i=0;i<3;i++) { // leds to the left
+        for (int i = 0; i < 3; i++)
+        { // leds to the left
             addChild(createLight<SmallLight<ReRedLight>>(Vec(104 + i * 42, 30), module, Mixer::MUTE_LIGHT + i));
         }
-        for(int i=3;i<6;i++) { // leds to the right
+        for (int i = 3; i < 6; i++)
+        { // leds to the right
             addChild(createLight<SmallLight<ReRedLight>>(Vec(135 + i * 42, 30), module, Mixer::MUTE_LIGHT + i));
         }
 
@@ -270,7 +294,8 @@ struct MixerWidget : ModuleWidget {
         addParam(createParam<ReKnobMGrey>(Vec(368, 193), module, Mixer::MASTER_EQ_MID_PARAM));
         addParam(createParam<ReKnobMDarkGrey>(Vec(368, 235), module, Mixer::MASTER_EQ_LOW_PARAM));
         // meter
-        for(int i=0;i<6;i++) {
+        for (int i = 0; i < 6; i++)
+        {
             addChild(createLight<SmallLight<ReRedLight>>(Vec(364, 33 + i * 9), module, Mixer::METER_L_LIGHT + i));
             addChild(createLight<SmallLight<ReRedLight>>(Vec(394, 33 + i * 9), module, Mixer::METER_R_LIGHT + i));
         }
@@ -287,7 +312,6 @@ struct MixerWidget : ModuleWidget {
         addOutput(createOutput<PJ301MPort>(Vec(34.25, 108.75), module, Mixer::AUX2_R_OUTPUT));
         addInput(createInput<PJ301MPort>(Vec(4.25, 143.75), module, Mixer::AUX2_L_INPUT));
         addInput(createInput<PJ301MPort>(Vec(34.25, 143.75), module, Mixer::AUX2_R_INPUT));
-
     }
 };
 

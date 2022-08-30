@@ -6,37 +6,43 @@
 #define NUM_CHANNELS 4
 #define NUM_SCALES 16
 
-struct Erwin : Module {
-    enum ParamIds {
+struct Erwin : Module
+{
+    enum ParamIds
+    {
         CHANNEL_TRANSPOSE_PARAM,
         NOTE_PARAM = CHANNEL_TRANSPOSE_PARAM + NUM_CHANNELS,
         SELECT_PARAM = NOTE_PARAM + 12,
         NUM_PARAMS
     };
-    enum InputIds {
+    enum InputIds
+    {
         TRANSPOSE_INPUT,
         SEMI_INPUT,
         IN_INPUT,
         SELECT_INPUT = IN_INPUT + 4,
         NUM_INPUTS
     };
-    enum OutputIds {
+    enum OutputIds
+    {
         OUT_OUTPUT,
         NUM_OUTPUTS = OUT_OUTPUT + 4
     };
-    enum LightIds {
+    enum LightIds
+    {
         NOTE_LIGHT,
         NUM_LIGHTS = NOTE_LIGHT + 12
     };
 
-    enum QModes {
+    enum QModes
+    {
         DOWN,
         UP,
         NEAREST
     };
 
-
-    Erwin() {
+    Erwin()
+    {
         std::string notes[12] = {"C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"};
 
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -45,22 +51,24 @@ struct Erwin : Module {
         configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 2, -4, 4, 0, "Octave");
         configParam(Erwin::CHANNEL_TRANSPOSE_PARAM + 3, -4, 4, 0, "Octave");
         configParam(Erwin::SELECT_PARAM, 0, 15, 0, "Scene", "", 0, 1, 1);
-        for(int i=0; i<12; i++) {
+        for (int i = 0; i < 12; i++)
+        {
             configSwitch(Erwin::NOTE_PARAM + i, 0.0, 1.0, 0.0, "Enable Note " + notes[i]);
         }
         onReset();
 
         configInput(TRANSPOSE_INPUT, "Octave CV");
         configInput(SEMI_INPUT, "Transpose CV");
-        for(int i=0; i<NUM_CHANNELS; i++) {
-            configInput(IN_INPUT + i, "#" + std::to_string(i+1));
-            configOutput(OUT_OUTPUT + i, "#" +std::to_string(i+1));
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
+            configInput(IN_INPUT + i, "#" + std::to_string(i + 1));
+            configOutput(OUT_OUTPUT + i, "#" + std::to_string(i + 1));
         }
         configInput(IN_INPUT + 4, "Scene CV");
     }
 
     void process(const ProcessArgs &args) override;
-    json_t* dataToJson() override;
+    json_t *dataToJson() override;
     void dataFromJson(json_t *rootJ) override;
     void onReset() override;
 
@@ -74,12 +82,14 @@ struct Erwin : Module {
     dsp::SchmittTrigger noteTriggers[12];
 };
 
-json_t* Erwin::dataToJson() {
+json_t *Erwin::dataToJson()
+{
     json_t *rootJ = json_object();
 
     // Note values
     json_t *gatesJ = json_array();
-    for (int i = 0; i < 12 * NUM_SCALES; i++) {
+    for (int i = 0; i < 12 * NUM_SCALES; i++)
+    {
         json_t *gateJ = json_boolean(noteState[i]);
         json_array_append_new(gatesJ, gateJ);
     }
@@ -90,54 +100,62 @@ json_t* Erwin::dataToJson() {
     return rootJ;
 }
 
-void Erwin::dataFromJson(json_t *rootJ) {
+void Erwin::dataFromJson(json_t *rootJ)
+{
     // Note values
     json_t *gatesJ = json_object_get(rootJ, "notes");
 
-    if(!gatesJ) {
+    if (!gatesJ)
+    {
         DEBUG("Erwin: Invalid Input file");
         return;
     }
 
-    for (unsigned int i = 0; i < json_array_size(gatesJ); i++) {
+    for (unsigned int i = 0; i < json_array_size(gatesJ); i++)
+    {
         json_t *gateJ = json_array_get(gatesJ, i);
         noteState[i] = gateJ ? json_boolean_value(gateJ) : false;
     }
     json_t *modeJ = json_object_get(rootJ, "mode");
-    if(modeJ) {
+    if (modeJ)
+    {
         mode = json_integer_value(modeJ);
     }
 }
 
-void Erwin::onReset() {
-    for (int i = 0; i < 12 * NUM_SCALES; i++) noteState[i] = 0;
+void Erwin::onReset()
+{
+    for (int i = 0; i < 12 * NUM_SCALES; i++)
+        noteState[i] = 0;
 }
 
-void Erwin::process(const ProcessArgs &args) {
+void Erwin::process(const ProcessArgs &args)
+{
 
     // Scale selection
-    int scaleOffset = clamp((int)(params[SELECT_PARAM].getValue()
-        + inputs[SELECT_INPUT].getVoltage() * NUM_SCALES /10),0,15) * 12;
-    bool* currentScale = noteState + scaleOffset;
+    int scaleOffset = clamp((int)(params[SELECT_PARAM].getValue() + inputs[SELECT_INPUT].getVoltage() * NUM_SCALES / 10), 0, 15) * 12;
+    bool *currentScale = noteState + scaleOffset;
 
     // limit to 1 octave
     transposeSemi = (int)round(inputs[SEMI_INPUT].getVoltage() * 1.2);
 
-    for(unsigned int y=0; y<NUM_CHANNELS; y++) {
+    for (unsigned int y = 0; y < NUM_CHANNELS; y++)
+    {
         // normalize to first channel
-        if(!inputs[IN_INPUT + y].isConnected()) {
+        if (!inputs[IN_INPUT + y].isConnected())
+        {
             inputs[IN_INPUT + y].setVoltage(inputs[IN_INPUT].getVoltage(), 0);
         }
 
         int currentPolyphony = std::max(1, inputs[IN_INPUT + y].getChannels());
         outputs[OUT_OUTPUT + y].setChannels(currentPolyphony);
 
-        for (int c = 0; c < currentPolyphony; c++) {
-            octave = trunc(inputs[IN_INPUT+y].getPolyVoltage(c));
-            freq = inputs[IN_INPUT+y].getPolyVoltage(c) - octave;
+        for (int c = 0; c < currentPolyphony; c++)
+        {
+            octave = trunc(inputs[IN_INPUT + y].getPolyVoltage(c));
+            freq = inputs[IN_INPUT + y].getPolyVoltage(c) - octave;
             // limit to 4 octaves
-            transposeOctave = clamp((int)round(inputs[TRANSPOSE_INPUT].getPolyVoltage(c) / 2.5)
-                + (int)round(params[CHANNEL_TRANSPOSE_PARAM + y].getValue()),-4, 4);
+            transposeOctave = clamp((int)round(inputs[TRANSPOSE_INPUT].getPolyVoltage(c) / 2.5) + (int)round(params[CHANNEL_TRANSPOSE_PARAM + y].getValue()), -4, 4);
 
             // index of the quantized note
             int index = 0;
@@ -147,16 +165,17 @@ void Erwin::process(const ProcessArgs &args) {
             uint8_t stepsUp = 0;
             uint8_t stepsDown = 0;
 
-            while(!currentScale[modN(semiUp + stepsUp,12)] && stepsUp < 12)
-            stepsUp++;
-            while(!currentScale[modN(semiDown - stepsDown, 12)] && stepsDown < 12)
-            stepsDown++;
+            while (!currentScale[modN(semiUp + stepsUp, 12)] && stepsUp < 12)
+                stepsUp++;
+            while (!currentScale[modN(semiDown - stepsDown, 12)] && stepsDown < 12)
+                stepsDown++;
 
             // Reset for empty scales to avoid transposing by 1 octave
             stepsUp %= 12;
             stepsDown %= 12;
 
-            switch(mode) {
+            switch (mode)
+            {
             case QModes::UP:
                 index = semiUp + stepsUp;
                 break;
@@ -165,35 +184,37 @@ void Erwin::process(const ProcessArgs &args) {
                 break;
             case QModes::NEAREST:
                 if (stepsUp < stepsDown)
-                index = semiUp + stepsUp;
+                    index = semiUp + stepsUp;
                 else
-                index = semiDown - stepsDown;
+                    index = semiDown - stepsDown;
                 break;
             }
 
-            if(transposeSemi)
-            index += transposeSemi;
+            if (transposeSemi)
+                index += transposeSemi;
 
-            outputs[OUT_OUTPUT + y].setVoltage(octave + index * 1/12.0 + transposeOctave, c);
+            outputs[OUT_OUTPUT + y].setVoltage(octave + index * 1 / 12.0 + transposeOctave, c);
         }
-
     }
 
     // Note buttons
-    for (int i = 0; i < 12; i++) {
-        if (noteTriggers[i].process(params[NOTE_PARAM + i].getValue())) {
+    for (int i = 0; i < 12; i++)
+    {
+        if (noteTriggers[i].process(params[NOTE_PARAM + i].getValue()))
+        {
             currentScale[i] = !currentScale[i];
         }
         lights[NOTE_LIGHT + i].value = (currentScale[i] >= 1.0) ? 0.7 : 0;
     }
-
 }
 
-struct ErwinWidget : ModuleWidget {
-    ErwinWidget(Erwin *module) {
+struct ErwinWidget : ModuleWidget
+{
+    ErwinWidget(Erwin *module)
+    {
         setModule(module);
         box.size = Vec(8 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
-        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/reface/rewin_bg.svg")));
+        setPanel(createPanel(asset::plugin(pluginInstance, "res/reface/rewin_bg.svg")));
 
         /* "scenes" */
         addParam(createParam<ReSnapKnobLGrey>(Vec(39, 40), module, Erwin::SELECT_PARAM));
@@ -203,9 +224,10 @@ struct ErwinWidget : ModuleWidget {
         addInput(createInput<PJ301MPort>(Vec(85.75, 108.75), module, Erwin::TRANSPOSE_INPUT));
         addInput(createInput<PJ301MPort>(Vec(48.25, 108.75), module, Erwin::SEMI_INPUT));
 
-        for(int i=0;i<NUM_CHANNELS;i++) {
-            addOutput(createOutput<PJ301MPort>(Vec(92.75, 198.75 + i*42), module, Erwin::OUT_OUTPUT + i));
-            addInput(createInput<PJ301MPort>(Vec(62.75, 198.75 + i*42), module, Erwin::IN_INPUT + i));
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
+            addOutput(createOutput<PJ301MPort>(Vec(92.75, 198.75 + i * 42), module, Erwin::OUT_OUTPUT + i));
+            addInput(createInput<PJ301MPort>(Vec(62.75, 198.75 + i * 42), module, Erwin::IN_INPUT + i));
         }
 
         addParam(createParam<ReSnapKnobSRed>(Vec(80, 181), module, Erwin::CHANNEL_TRANSPOSE_PARAM));
@@ -214,87 +236,134 @@ struct ErwinWidget : ModuleWidget {
         addParam(createParam<ReSnapKnobSBlue>(Vec(80, 308), module, Erwin::CHANNEL_TRANSPOSE_PARAM + 3));
 
         /* note buttons */
-        int white=0;
+        int white = 0;
         int black = 0;
-        for(int i=0; i<12; i++) {
-            if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10 ) {
-                addParam(createParam<ReButtonM>(Vec(8, 312 - black*28), module, Erwin::NOTE_PARAM + i));
-                addChild(createLight<ReLightM<ReBlueLight>>(Vec(10, 314 - black*28), module, Erwin::NOTE_LIGHT + i));
+        for (int i = 0; i < 12; i++)
+        {
+            if (i == 1 || i == 3 || i == 6 || i == 8 || i == 10)
+            {
+                addParam(createParam<ReButtonM>(Vec(8, 312 - black * 28), module, Erwin::NOTE_PARAM + i));
+                addChild(createLight<ReLightM<ReBlueLight>>(Vec(10, 314 - black * 28), module, Erwin::NOTE_LIGHT + i));
                 black++;
             }
-            else {
-                if(i == 4)
-                black++;
-                addParam(createParam<ReButtonM>(Vec(33, 326 - white*28), module, Erwin::NOTE_PARAM + i));
-                addChild(createLight<ReLightM<ReBlueLight>>(Vec(35, 328 - white*28), module, Erwin::NOTE_LIGHT + i));
+            else
+            {
+                if (i == 4)
+                    black++;
+                addParam(createParam<ReButtonM>(Vec(33, 326 - white * 28), module, Erwin::NOTE_PARAM + i));
+                addChild(createLight<ReLightM<ReBlueLight>>(Vec(35, 328 - white * 28), module, Erwin::NOTE_LIGHT + i));
                 white++;
             }
         }
     }
 
-    struct ErwinModeMenuItem : MenuItem {
-        struct ErwinModeItem : MenuItem {
+    struct ErwinModeMenuItem : MenuItem
+    {
+        struct ErwinModeItem : MenuItem
+        {
             Erwin *module;
             int mode_;
-            void onAction(const event::Action &e) override {
+            void onAction(const event::Action &e) override
+            {
                 module->mode = mode_;
             }
-            void step() override {
+            void step() override
+            {
                 rightText = (module->mode == mode_) ? "✔" : "";
                 MenuItem::step();
             }
         };
 
         Erwin *module;
-        Menu *createChildMenu() override {
+        Menu *createChildMenu() override
+        {
             Menu *menu = new Menu;
             menu->addChild(construct<ErwinModeItem>(&MenuItem::text, "Up",
-                &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::UP));
+                                                    &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::UP));
             menu->addChild(construct<ErwinModeItem>(&MenuItem::text, "Down",
-                &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::DOWN));
+                                                    &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::DOWN));
             menu->addChild(construct<ErwinModeItem>(&MenuItem::text, "Nearest",
-                &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::NEAREST));
+                                                    &ErwinModeItem::module, module, &ErwinModeItem::mode_, Erwin::QModes::NEAREST));
             return menu;
         }
     };
 
     /* Export scales */
-    struct ErwinSaveItem : MenuItem {
+    struct ErwinSaveItem : MenuItem
+    {
         Erwin *module;
 
-        void onAction(const event::Action &e) override {
-            json_t* rootJ = module->dataToJson();
-            if(rootJ) {
-                char* path = osdialog_file(OSDIALOG_SAVE, NULL, "rewin.json", NULL);
-                if(path) {
-                    if (json_dump_file(rootJ, path, 0))
-                    DEBUG("Error: cannot export rewin scale file");
-                }
-                free(path);
+        void onAction(const event::Action &e) override
+        {
+            json_t *rootJ = module->dataToJson();
+            if (rootJ)
+            {
+#ifdef USING_CARDINAL_NOT_RACK
+                async_dialog_filebrowser(true, nullptr, "Save scales", [rootJ](char *path)
+                                         { pathSelected(rootJ, path); });
+#else
+                char *path = osdialog_file(OSDIALOG_SAVE, NULL, "rewin.json", NULL);
+                pathSelected(rootJ, path);
+#endif
             }
+        }
+
+        static void pathSelected(json_t *rootJ, char *path)
+        {
+            if (path)
+            {
+                if (json_dump_file(rootJ, path, 0))
+                    DEBUG("Error: cannot export rewin scale file");
+            }
+            free(path);
         }
     };
 
     /* Import scales */
-    struct ErwinLoadItem : MenuItem {
+    struct ErwinLoadItem : MenuItem
+    {
         Erwin *module;
-        json_error_t error;
 
-        void onAction(const event::Action &e) override {
-            char* path = osdialog_file(OSDIALOG_OPEN, NULL, NULL, NULL);
-            if(path) {
-                json_t* rootJ = json_load_file(path, 0, &error);
-                if(rootJ) {
+        void onAction(const event::Action &e) override
+        {
+#ifdef USING_CARDINAL_NOT_RACK
+            Erwin *module = this->module;
+            async_dialog_filebrowser(false, nullptr, "Load scales", [module](char *path)
+                                     { pathSelected(module, path); });
+#else
+            char *path = osdialog_file(OSDIALOG_OPEN, NULL, NULL, NULL);
+            pathSelected(module, path);
+#endif
+        }
+
+        static void pathSelected(Erwin *module, char *path)
+        {
+            if (path)
+            {
+                json_error_t error;
+                json_t *rootJ = json_load_file(path, 0, &error);
+                if (rootJ)
+                {
                     // Check this here to not break compatibility with old (single scale) saves
                     json_t *gatesJ = json_object_get(rootJ, "notes");
-                    if(!gatesJ || json_array_size(gatesJ) != 12 * NUM_SCALES) {
+                    if (!gatesJ || json_array_size(gatesJ) != 12 * NUM_SCALES)
+                    {
+#ifdef USING_CARDINAL_NOT_RACK
+                        async_dialog_message("rewin: invalid input file");
+#else
                         osdialog_message(OSDIALOG_ERROR, OSDIALOG_OK, "rewin: invalid input file");
+#endif
                         return;
                     }
                     module->dataFromJson(rootJ);
                 }
-                else {
+                else
+                {
+#ifdef USING_CARDINAL_NOT_RACK
+                    async_dialog_message("rewin: can't load file - see logfile for details");
+#else
                     osdialog_message(OSDIALOG_ERROR, OSDIALOG_OK, "rewin: can't load file - see logfile for details");
+#endif
                     DEBUG("Error: Can't import file %s", path);
                     DEBUG("Text: %s", error.text);
                     DEBUG("Source: %s", error.source);
@@ -304,8 +373,9 @@ struct ErwinWidget : ModuleWidget {
         }
     };
 
-    void appendContextMenu(Menu *menu) override {
-        Erwin *module = dynamic_cast<Erwin*>(this->module);
+    void appendContextMenu(Menu *menu) override
+    {
+        Erwin *module = dynamic_cast<Erwin *>(this->module);
         assert(module);
 
         menu->addChild(new MenuSeparator());
@@ -321,7 +391,6 @@ struct ErwinWidget : ModuleWidget {
         ErwinSaveItem *svItem = createMenuItem<ErwinSaveItem>("Save scales");
         svItem->module = module;
         menu->addChild(svItem);
-
     }
 };
 

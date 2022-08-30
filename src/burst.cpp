@@ -111,7 +111,7 @@ void Burst::process(const ProcessArgs &args)
   float randomDelta = 0;
 
   timeParam = clamp(params[TIME_PARAM].getValue() + (params[TIME_ATT_PARAM].getValue() * inputs[TIME_INPUT].getVoltage() / 10.0 * MAX_TIME), 0.0f, MAX_TIME);
-  pulseParam = clamp((int)params[REP_PARAM].getValue() + (inputs[REP_INPUT].getVoltage() * params[REP_ATT_PARAM].getValue() /10.0 * MAX_REPS), 0, MAX_REPS);
+  pulseParam = clamp((int)params[REP_PARAM].getValue() + (int)(inputs[REP_INPUT].getVoltage() * params[REP_ATT_PARAM].getValue() /10.0 * MAX_REPS), 0, MAX_REPS);
 
   //exponential scaling for timeparam
   timeParam = (exp(timeParam) - 1)/(euler - 1);
@@ -217,7 +217,7 @@ struct BurstWidget : ModuleWidget {
   BurstWidget(Burst *module) {
     setModule(module);
     box.size = Vec(8 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/reface/reburst_bg.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, "res/reface/reburst_bg.svg")));
 
     addParam(createParam<ReButtonL>(Vec(39, 40), module, Burst::BUTTON_PARAM));
     addInput(createInput<PJ301MPort>(Vec(48, 110), module, Burst::GATE_INPUT));;
